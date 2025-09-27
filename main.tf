@@ -79,7 +79,6 @@ module "alb_controller" {
   vpc_id = module.vpc.vpc_id
   region = var.region
   oidc_provider = module.eks.oidc_provider_arn
-  service_account_role_arn = module.iam.alb_sa_role_arn
 }
 
 # Outputs for reference
