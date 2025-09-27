@@ -27,7 +27,6 @@ data "aws_eks_cluster_auth" "cluster" {
 # IAM for IRSA (role for application service account)
 module "iam" {
   source = "./modules/iam"
-  region = var.region
   eks_cluster_name = module.eks.cluster_id
   oidc_provider = module.eks.oidc_provider_url
 }
