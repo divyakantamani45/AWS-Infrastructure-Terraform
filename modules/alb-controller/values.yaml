@@ -1,0 +1,5 @@
+clusterName: "REPLACE_ME"
+region: "REPLACE_ME"
+serviceAccount:
+  name: aws-load-balancer-controller
+  create: false
