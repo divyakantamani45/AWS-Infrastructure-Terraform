@@ -56,8 +56,8 @@ resource "aws_secretsmanager_secret" "app_secret" {
 resource "aws_secretsmanager_secret_version" "app_secret_version" {
   secret_id = aws_secretsmanager_secret.app_secret.id
   secret_string = jsonencode({
-    DB_USERNAME = module.rds.db_username
-    DB_PASSWORD = module.rds.db_password
+    DB_USERNAME = module.rds.db_name
+    DB_PASSWORD = random_password.rds_password.result
     DB_HOST     = module.rds.db_endpoint
     DB_NAME     = module.rds.db_name
   })
