@@ -38,7 +38,7 @@ jobs:
           terraform fmt -check
 
       - name: Terraform Init
-        run: terraform init -reconfigure -upgrade -input=false
+        run: terraform init -backend-config=envs/prod/backend.tf -upgrade -input=false
 
       - name: Terraform Validate
         run: terraform validate
@@ -48,11 +48,11 @@ jobs:
         run: terraform plan -out plan.tfplan -var-file=envs/prod/terraform.tfvars
         continue-on-error: true
 
-      - name: Upload Plan Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tfplan
-          path: plan.tfplan
+      # - name: Upload Plan Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: tfplan
+      #     path: plan.tfplan
 
       - name: Comment Plan on PR
         uses: marocchino/sticky-pull-request-comment@v2
@@ -62,12 +62,14 @@ jobs:
             ```hcl
             ${{ steps.plan.outputs.stdout }}
             ```
-
   terraform-apply:
     name: Terraform Apply
     runs-on: ubuntu-latest
     needs: terraform-plan
-    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      id-token: write
+    #if: github.ref == 'refs/heads/main'
 
     # 👇 requires approval if you protect an environment in repo settings
     environment: production
@@ -86,7 +88,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -backend-config=envs/prod/backend.tf
 
       - name: Terraform Apply
         run: terraform apply "plan.tfplan"

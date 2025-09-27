@@ -1,0 +1,41 @@
+name: Terraform Destroy
+
+on:
+  workflow_dispatch:   # Manual trigger only
+
+jobs:
+  terraform-destroy:
+    name: Destroy Infrastructure
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production   # requires approval in GitHub settings
+      url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+    steps:
+      # Step 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2. Configure cloud credentials (example: AWS)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      # Step 3. Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+
+      # Step 4. Init with backend (example: prod backend)
+      - name: Terraform Init
+        working-directory: infra
+        run: terraform init -backend-config=envs/prod/backend.tf
+
+      # Step 5. Terraform Destroy (with auto-approve)
+      - name: Terraform Destroy
+        working-directory: infra
+        run: terraform destroy -auto-approve -var-file=envs/prod/terraform.tfvars
