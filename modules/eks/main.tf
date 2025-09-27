@@ -4,10 +4,10 @@ module "eks_cluster" {
 
   cluster_name = var.cluster_name
   cluster_version = "1.27"
-  subnets = var.private_subnets
+  subnet_ids = var.private_subnets
   vpc_id = var.vpc_id
 
-  node_groups = {
+  eks_managed_node_groups = {
     default = {
       desired_capacity = 2
       max_capacity     = 4
@@ -15,6 +15,4 @@ module "eks_cluster" {
       instance_types   = ["t3.medium"]
     }
   }
-
-  manage_aws_auth = true
 }
