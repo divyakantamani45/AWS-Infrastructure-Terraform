@@ -34,10 +34,11 @@ jobs:
 
       # Step 4. Init with backend (example: prod backend)
       - name: Terraform Init
-        working-directory: infra
         run: terraform init
+      
+      - name: Terraform Init
+        run: terraform plan -destroy -out=destroy.tfplan -var-file=envs/prod/terraform.tfvars
 
       # Step 5. Terraform Destroy (with auto-approve)
       - name: Terraform Destroy
-        working-directory: infra
-        run: terraform destroy -auto-approve -var-file=envs/prod/terraform.tfvars
+        run: terraform apply destroy.tfplan
