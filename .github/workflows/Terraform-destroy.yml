@@ -7,7 +7,9 @@ jobs:
   terraform-destroy:
     name: Destroy Infrastructure
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: production   # requires approval in GitHub settings
       url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
