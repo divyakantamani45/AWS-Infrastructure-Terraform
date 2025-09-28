@@ -8,7 +8,7 @@ module "vpc" {
 # EKS cluster (uses terraform-aws-modules/eks underneath)
 module "eks" {
   source = "./modules/eks"
-  cluster_name = var.cluster_name
+ # cluster_name = var.cluster_name
   region = var.region
   vpc_id = module.vpc.vpc_id
   private_subnets = module.vpc.private_subnets
