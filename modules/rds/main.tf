@@ -8,6 +8,7 @@ resource "aws_db_instance" "this" {
   engine = "postgres"
   engine_version = "17.4"
   instance_class = "db.t4g.micro"
+  db_name = var.db_name
   username = var.db_username
   password = var.db_password
   allocated_storage = 20
