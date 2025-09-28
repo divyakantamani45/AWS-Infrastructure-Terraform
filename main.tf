@@ -49,10 +49,6 @@ module "rds" {
   db_password = jsondecode(aws_secretsmanager_secret_version.app_secret_version.secret_string)["DB_PASSWORD"]
 }
 
-resource "random_password" "rds_password" {
-  length = 16
-  special = true
-}
 
 # Put RDS credentials into Secrets Manager
 resource "aws_secretsmanager_secret" "app_secret" {
@@ -64,7 +60,7 @@ resource "aws_secretsmanager_secret_version" "app_secret_version" {
   secret_id = aws_secretsmanager_secret.app_secret.id
   secret_string = jsonencode({
     DB_USERNAME = "appuser"
-    DB_PASSWORD = random_password.rds_password.result
+    #DB_PASSWORD = random_password.rds_password.result
     DB_NAME = "appdb"
   })
 }

@@ -1,6 +1,6 @@
 module "eks_cluster" {
   source = "terraform-aws-modules/eks/aws"
-  version = "20.0.0" # pin an appropriate version
+  version = "20.8.5" # pin an appropriate version
 
   cluster_name = var.cluster_name
   cluster_version = "1.27"
