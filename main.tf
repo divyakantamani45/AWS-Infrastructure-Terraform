@@ -34,7 +34,7 @@ module "iam" {
  #Ecr creation
 module "ecr" {
   source = "./modules/ecr"
-  allowed_principals = module.iam.irsa_role_arn
+  allowed_principals = [module.iam.irsa_role_arn]
 }
 
 
