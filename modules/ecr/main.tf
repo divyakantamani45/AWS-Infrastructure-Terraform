@@ -5,7 +5,7 @@ resource "aws_ecr_repository" "this" {
     # }
 
 
-    image_tag_mutability = "IMMUTABLE"
+    #image_tag_mutability = "IMMUTABLE"
 
 
     #tags = var.tags
