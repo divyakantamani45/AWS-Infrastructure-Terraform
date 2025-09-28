@@ -6,30 +6,37 @@ module "vpc" {
 }
 
 # EKS cluster (uses terraform-aws-modules/eks underneath)
-module "eks" {
-  source = "./modules/eks"
-  cluster_name = var.cluster_name
-  region = var.region
-  vpc_id = module.vpc.vpc_id
-  private_subnets = module.vpc.private_subnets
-  public_subnets = module.vpc.public_subnets
-}
+# module "eks" {
+#   source = "./modules/eks"
+#   cluster_name = var.cluster_name
+#   region = var.region
+#   vpc_id = module.vpc.vpc_id
+#   private_subnets = module.vpc.private_subnets
+#   public_subnets = module.vpc.public_subnets
+# }
 
 # data sources for providers (used in providers.tf)
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
-}
+# data "aws_eks_cluster" "cluster" {
+#   name = module.eks.cluster_id
+# }
 
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
-}
+# data "aws_eks_cluster_auth" "cluster" {
+#   name = module.eks.cluster_id
+# }
 
 # IAM for IRSA (role for application service account)
-module "iam" {
-  source = "./modules/iam"
-  eks_cluster_name = module.eks.cluster_id
-  oidc_provider = module.eks.oidc_provider_url
-}
+# module "iam" {
+#   source = "./modules/iam"
+#   eks_cluster_name = module.eks.cluster_id
+#   oidc_provider = module.eks.oidc_provider_url
+# }
+
+# #Ecr creation
+# module "ecr" {
+#   source = "./modules/ecr"
+#   allowed_principals = module.iam.irsa_role_arn
+# }
+
 
 # RDS (Postgres)
 module "rds" {
