@@ -1,11 +1,50 @@
-module "eks_cluster" {
-  source = "terraform-aws-modules/eks/aws"
-  version = "20.0" # pin an appropriate version
+############################
+# IAM role for node group
+############################
+resource "aws_iam_role" "eks_node_role" {
+  name = "${var.cluster_name}-nodegroup-role"
 
-  cluster_name = var.cluster_name
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+# Attach required policies
+resource "aws_iam_role_policy_attachment" "eks_worker_node" {
+  role       = aws_iam_role.eks_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_cni" {
+  role       = aws_iam_role.eks_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_ecr" {
+  role       = aws_iam_role.eks_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+############################
+# EKS Cluster with Node Group
+############################
+module "eks_cluster" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "20.0"
+
+  cluster_name    = var.cluster_name
   cluster_version = "1.29"
-  subnet_ids = var.private_subnets
-  vpc_id = var.vpc_id
+  subnet_ids      = var.private_subnets
+  vpc_id          = var.vpc_id
 
   eks_managed_node_groups = {
     default = {
@@ -14,11 +53,10 @@ module "eks_cluster" {
       min_capacity     = 1
       instance_types   = ["t3.small"]
       capacity_type    = "SPOT"
-      iam_role_additional_policies = {
-        AmazonEKSWorkerNodePolicy         = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-        AmazonEC2ContainerRegistryReadOnly = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-        AmazonEKS_CNI_Policy              = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-      }
+
+      # Use the manually created IAM role
+      iam_role_arn = aws_iam_role.eks_node_role.arn
     }
   }
 }
+
