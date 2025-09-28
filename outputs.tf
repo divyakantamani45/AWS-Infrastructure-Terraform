@@ -1,4 +1,4 @@
-Outputs for reference
+#Outputs for reference
 output "cluster_name" {
   value = module.eks.cluster_id
 }
