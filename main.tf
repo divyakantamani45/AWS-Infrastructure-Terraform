@@ -78,12 +78,3 @@ module "alb_controller" {
   region = var.region
   oidc_provider = module.eks.oidc_provider_arn
 }
-
-# Outputs for reference
-output "cluster_name" {
-  value = module.eks.cluster_id
-}
-
-output "kubeconfig_command" {
-  value = "aws eks update-kubeconfig --region ${var.region} --name ${module.eks.cluster_id}"
-}
