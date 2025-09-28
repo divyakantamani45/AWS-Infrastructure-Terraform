@@ -17,17 +17,17 @@ module "eks" {
 
 #data sources for providers (used in providers.tf)
 data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
+  name = module.eks.cluster_name
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
+  name = module.eks.cluster_name
 }
 
 # IAM for IRSA (role for application service account)
 module "iam" {
   source = "./modules/iam"
-  eks_cluster_name = module.eks.cluster_id
+  eks_cluster_name = module.eks.cluster_name
   oidc_provider = module.eks.oidc_provider_url
 }
 
@@ -86,7 +86,7 @@ module "efs" {
 #Install AWS Load Balancer Controller (Helm) + create IAM role for it
 module "alb_controller" {
   source = "./modules/alb-controller"
-  cluster_name = module.eks.cluster_id
+  cluster_name = module.eks.cluster_name
   vpc_id = module.vpc.vpc_id
   region = var.region
   oidc_provider = module.eks.oidc_provider_arn
