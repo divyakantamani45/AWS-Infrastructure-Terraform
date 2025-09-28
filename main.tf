@@ -55,12 +55,21 @@ resource "aws_secretsmanager_secret" "app_secret" {
   name = "myapp-secretmanager"
   description = "DB credentials for devops app"
 }
+resource "random_password" "rds_password" {
+  length           = 16
+  special          = true
+  override_special = "!#$%^&*()-_=+[]{}<>:?"
+  keepers = {
+    # only regenerate if this value changes
+    secret_rotation = 1
+  }
+}
 
 resource "aws_secretsmanager_secret_version" "app_secret_version" {
   secret_id = aws_secretsmanager_secret.app_secret.id
   secret_string = jsonencode({
     DB_USERNAME = "appuser"
-    #DB_PASSWORD = random_password.rds_password.result
+    DB_PASSWORD = random_password.rds_password.result
     DB_NAME = "appdb"
   })
 }
