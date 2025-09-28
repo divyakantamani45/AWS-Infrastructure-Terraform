@@ -6,36 +6,36 @@ module "vpc" {
 }
 
 # EKS cluster (uses terraform-aws-modules/eks underneath)
-# module "eks" {
-#   source = "./modules/eks"
-#   cluster_name = var.cluster_name
-#   region = var.region
-#   vpc_id = module.vpc.vpc_id
-#   private_subnets = module.vpc.private_subnets
-#   public_subnets = module.vpc.public_subnets
-# }
+module "eks" {
+  source = "./modules/eks"
+  cluster_name = var.cluster_name
+  region = var.region
+  vpc_id = module.vpc.vpc_id
+  private_subnets = module.vpc.private_subnets
+  public_subnets = module.vpc.public_subnets
+}
 
-# data sources for providers (used in providers.tf)
-# data "aws_eks_cluster" "cluster" {
-#   name = module.eks.cluster_id
-# }
+#data sources for providers (used in providers.tf)
+data "aws_eks_cluster" "cluster" {
+  name = module.eks.cluster_id
+}
 
-# data "aws_eks_cluster_auth" "cluster" {
-#   name = module.eks.cluster_id
-# }
+data "aws_eks_cluster_auth" "cluster" {
+  name = module.eks.cluster_id
+}
 
 # IAM for IRSA (role for application service account)
-# module "iam" {
-#   source = "./modules/iam"
-#   eks_cluster_name = module.eks.cluster_id
-#   oidc_provider = module.eks.oidc_provider_url
-# }
+module "iam" {
+  source = "./modules/iam"
+  eks_cluster_name = module.eks.cluster_id
+  oidc_provider = module.eks.oidc_provider_url
+}
 
-# #Ecr creation
-# module "ecr" {
-#   source = "./modules/ecr"
-#   allowed_principals = module.iam.irsa_role_arn
-# }
+ #Ecr creation
+module "ecr" {
+  source = "./modules/ecr"
+  allowed_principals = module.iam.irsa_role_arn
+}
 
 
 # RDS (Postgres)
@@ -56,7 +56,7 @@ resource "random_password" "rds_password" {
 
 # Put RDS credentials into Secrets Manager
 resource "aws_secretsmanager_secret" "app_secret" {
-  name = "my-app-secrets"
+  name = "myapp-secretmanager"
   description = "DB credentials for devops app"
 }
 
@@ -77,11 +77,11 @@ module "efs" {
   region = var.region
 }
 
-# Install AWS Load Balancer Controller (Helm) + create IAM role for it
-# module "alb_controller" {
-#   source = "./modules/alb-controller"
-#   cluster_name = module.eks.cluster_id
-#   vpc_id = module.vpc.vpc_id
-#   region = var.region
-#   oidc_provider = module.eks.oidc_provider_arn
-# }
+#Install AWS Load Balancer Controller (Helm) + create IAM role for it
+module "alb_controller" {
+  source = "./modules/alb-controller"
+  cluster_name = module.eks.cluster_id
+  vpc_id = module.vpc.vpc_id
+  region = var.region
+  oidc_provider = module.eks.oidc_provider_arn
+}

@@ -25,6 +25,16 @@ resource "aws_iam_role_policy_attachment" "attach" {
   role       = aws_iam_role.alb_role.name
   policy_arn = "arn:aws:iam::aws:policy/AWSLoadBalancerControllerIAMPolicy"
 }
+#create Service account
+resource "kubernetes_service_account" "alb_sa" {
+  metadata {
+    name      = "aws-load-balancer-controller"
+    namespace = "kube-system"
+    annotations = {
+      "eks.amazonaws.com/role-arn" = aws_iam_role.alb_role.arn
+    }
+  }
+}
 
 # Install Helm chart
 resource "helm_release" "aws_lb_controller" {
