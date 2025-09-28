@@ -6,31 +6,37 @@ module "vpc" {
 }
 
 # EKS cluster (uses terraform-aws-modules/eks underneath)
-module "eks" {
-  source = "./modules/eks"
-  cluster_name = var.cluster_name
-  region = var.region
-  vpc_id = module.vpc.vpc_id
-  private_subnets = module.vpc.private_subnets
-  public_subnets = module.vpc.public_subnets
-}
+# module "eks" {
+#   source = "./modules/eks"
+#   cluster_name = var.cluster_name
+#   region = var.region
+#   vpc_id = module.vpc.vpc_id
+#   private_subnets = module.vpc.private_subnets
+#   public_subnets = module.vpc.public_subnets
+# }
 
 # data sources for providers (used in providers.tf)
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
-}
+# data "aws_eks_cluster" "cluster" {
+#   name = module.eks.cluster_id
+# }
 
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
-}
+# data "aws_eks_cluster_auth" "cluster" {
+#   name = module.eks.cluster_id
+# }
 
 # IAM for IRSA (role for application service account)
-module "iam" {
-  source = "./modules/iam"
-  region = var.region
-  eks_cluster_name = module.eks.cluster_id
-  oidc_provider = module.eks.oidc_provider_url
-}
+# module "iam" {
+#   source = "./modules/iam"
+#   eks_cluster_name = module.eks.cluster_id
+#   oidc_provider = module.eks.oidc_provider_url
+# }
+
+# #Ecr creation
+# module "ecr" {
+#   source = "./modules/ecr"
+#   allowed_principals = module.iam.irsa_role_arn
+# }
+
 
 # RDS (Postgres)
 module "rds" {
@@ -40,7 +46,7 @@ module "rds" {
   db_subnet_ids = module.vpc.private_subnets
   db_name = "appdb"
   db_username = "appuser"
-  db_password = random_password.rds_password.result
+  db_password = jsondecode(aws_secretsmanager_secret_version.app_secret_version.secret_string)["DB_PASSWORD"]
 }
 
 resource "random_password" "rds_password" {
@@ -57,10 +63,9 @@ resource "aws_secretsmanager_secret" "app_secret" {
 resource "aws_secretsmanager_secret_version" "app_secret_version" {
   secret_id = aws_secretsmanager_secret.app_secret.id
   secret_string = jsonencode({
-    DB_USERNAME = module.rds.db_username
-    DB_PASSWORD = module.rds.db_password
-    DB_HOST     = module.rds.db_endpoint
-    DB_NAME     = module.rds.db_name
+    DB_USERNAME = "appuser"
+    DB_PASSWORD = random_password.rds_password.result
+    DB_NAME = "appdb"
   })
 }
 
@@ -73,20 +78,10 @@ module "efs" {
 }
 
 # Install AWS Load Balancer Controller (Helm) + create IAM role for it
-module "alb_controller" {
-  source = "./modules/alb_controller"
-  cluster_name = module.eks.cluster_id
-  vpc_id = module.vpc.vpc_id
-  region = var.region
-  oidc_provider = module.eks.oidc_provider_arn
-  service_account_role_arn = module.iam.alb_sa_role_arn
-}
-
-# Outputs for reference
-output "cluster_name" {
-  value = module.eks.cluster_id
-}
-
-output "kubeconfig_command" {
-  value = "aws eks update-kubeconfig --region ${var.region} --name ${module.eks.cluster_id}"
-}
+# module "alb_controller" {
+#   source = "./modules/alb-controller"
+#   cluster_name = module.eks.cluster_id
+#   vpc_id = module.vpc.vpc_id
+#   region = var.region
+#   oidc_provider = module.eks.oidc_provider_arn
+# }

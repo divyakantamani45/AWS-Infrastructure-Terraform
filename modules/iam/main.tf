@@ -34,6 +34,17 @@ resource "aws_iam_role_policy" "irsa_policy" {
         Effect = "Allow"
         Action = ["s3:GetObject","s3:PutObject"]
         Resource = "*"
+      },
+       # Allow ECR image pull
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+        ]
+        Resource = "*"
       }
     ]
   })
