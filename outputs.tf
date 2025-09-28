@@ -4,7 +4,7 @@ output "cluster_name" {
 }
 
 output "kubeconfig_command" {
-  value = "aws eks update-kubeconfig --region ${var.region} --name ${module.eks.cluster_id}"
+  value = "aws eks update-kubeconfig --region ${var.region} --name ${module.eks.cluster_name}"
 }
 output "rds_endpoint" {
   value = module.rds.db_endpoint
