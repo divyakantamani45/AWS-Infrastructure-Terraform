@@ -12,7 +12,7 @@ locals {
 resource "aws_efs_mount_target" "this" {
   for_each = local.subnet_map
   file_system_id = aws_efs_file_system.this.id
-  subnet_id = each.key
+  subnet_id = each.value
   security_groups = [var.vpc_sg_id]
 }
 
