@@ -2,7 +2,7 @@
 # IAM role for node group
 ############################
 resource "aws_iam_role" "eks_node_role" {
-  name = "{var.cluster_name}-nodegroup-role"
+  name = "${var.cluster_name}-nodegroup-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -37,7 +37,7 @@ resource "aws_iam_role_policy_attachment" "eks_ecr" {
 ############################
 # EKS Cluster with Node Group
 ############################
-module "eks" {
+module "eks_cluster" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.0"
 
