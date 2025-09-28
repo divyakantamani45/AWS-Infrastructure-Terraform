@@ -33,7 +33,7 @@ jobs:
       # Step 4. Init with backend (example: prod backend)
       - name: Terraform Init
         working-directory: infra
-        run: terraform init -backend-config=envs/prod/backend.tf
+        run: terraform init -backend-config=envs/prod/backend.hcl
 
       # Step 5. Terraform Destroy (with auto-approve)
       - name: Terraform Destroy
