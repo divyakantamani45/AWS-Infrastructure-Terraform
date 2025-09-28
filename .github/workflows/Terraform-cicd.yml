@@ -89,6 +89,8 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -out plan.tfplan -var-file=envs/prod/terraform.tfvars
       - name: Terraform Apply
         run: terraform apply "plan.tfplan"
