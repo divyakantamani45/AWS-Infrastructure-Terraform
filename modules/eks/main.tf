@@ -14,6 +14,11 @@ module "eks_cluster" {
       min_capacity     = 1
       instance_types   = ["t3.small"]
       capacity_type    = "SPOT"
+      iam_role_additional_policies = {
+        AmazonEKSWorkerNodePolicy         = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+        AmazonEC2ContainerRegistryReadOnly = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+        AmazonEKS_CNI_Policy              = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+      }
     }
   }
 }
