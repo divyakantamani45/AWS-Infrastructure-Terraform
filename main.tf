@@ -74,7 +74,7 @@ module "efs" {
   source = "./modules/efs"
   vpc_id = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
-  vpc_sg_id = module.default_sg_id
+  vpc_sg_id = module.vpc.default_sg_id
   region = var.region
 }
 
