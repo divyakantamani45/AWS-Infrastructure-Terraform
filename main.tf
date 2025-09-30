@@ -23,6 +23,7 @@ data "aws_eks_cluster" "cluster" {
 
 data "aws_eks_cluster_auth" "cluster" {
   name = "devops-eks-prod"
+  depends_on = [module.eks]
 }
 
 # IAM for IRSA (role for application service account)
