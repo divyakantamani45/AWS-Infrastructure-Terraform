@@ -93,7 +93,6 @@ module "alb_controller" {
     helm        = helm
     kubernetes  = kubernetes
   }
-  count = can(regex("localhost", data.aws_eks_cluster.cluster.endpoint)) ? 0 : 1
   cluster_name = module.eks.cluster_name
   vpc_id = module.vpc.vpc_id
   region = var.region
