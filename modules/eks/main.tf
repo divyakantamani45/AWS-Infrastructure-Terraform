@@ -67,7 +67,7 @@ module "eks_cluster" {
   #     most_recent              = true
   #     service_account_role_arn = aws_iam_role.efs_csi_role.arn
   #   }
-  }
+  #}
 }
 resource "aws_iam_policy" "efs_csi_policy" {
   name        = "${var.cluster_name}-AmazonEKS_EFS_CSI_Driver_Policy"
