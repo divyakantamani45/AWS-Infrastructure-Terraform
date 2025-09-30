@@ -53,7 +53,7 @@ module "rds" {
 
 # Put RDS credentials into Secrets Manager
 resource "aws_secretsmanager_secret" "app_secret" {
-  name = "myapp-secretmanager"
+  name = "devops-secretmanager"
   description = "DB credentials for devops app"
 }
 resource "random_password" "rds_password" {
