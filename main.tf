@@ -88,10 +88,10 @@ module "efs" {
 #Install AWS Load Balancer Controller (Helm) + create IAM role for it
 module "alb_controller" {
   source = "./modules/alb-controller"
-  providers = {
-    helm        = helm
-    kubernetes  = kubernetes
-  }
+  # providers = {
+  #   helm        = helm
+  #   kubernetes  = kubernetes
+  # }
   cluster_name = module.eks.cluster_name
   vpc_id = module.vpc.vpc_id
   region = var.region
