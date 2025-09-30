@@ -72,7 +72,7 @@ module "eks_cluster" {
 resource "aws_iam_policy" "efs_csi_policy" {
   name        = "${var.cluster_name}-AmazonEKS_EFS_CSI_Driver_Policy"
   description = "EFS CSI driver policy"
-  policy      = file("efs-csi-policy.json")
+  policy      = file(${path.module}/"efs-csi-policy.json")
 }
 
 resource "aws_iam_role" "efs_csi_role" {
