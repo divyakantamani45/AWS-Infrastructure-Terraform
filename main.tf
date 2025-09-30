@@ -17,13 +17,13 @@ module "eks" {
 
 #data sources for providers (used in providers.tf)
 data "aws_eks_cluster" "cluster" {
-  name = "devops-eks-prod"
-  depends_on = [module.eks, aws_eks_addon.ebs_csi_driver]
+  name = module.eks.cluster_name
+  depends_on = [module.eks]
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = "devops-eks-prod"
-  depends_on = [module.eks, aws_eks_addon.ebs_csi_driver]
+  name = module.eks.cluster_name
+  depends_on = [module.eks]
 }
 
 # IAM for IRSA (role for application service account)

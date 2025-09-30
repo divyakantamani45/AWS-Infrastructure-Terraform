@@ -62,11 +62,11 @@ module "eks_cluster" {
     }
   }
    # 👇 Addons (EFS CSI + optional others)
-  cluster_addons = {
-    aws-efs-csi-driver = {
-      most_recent              = true
-      service_account_role_arn = aws_iam_role.efs_csi_role.arn
-    }
+  # cluster_addons = {
+  #   aws-efs-csi-driver = {
+  #     most_recent              = true
+  #     service_account_role_arn = aws_iam_role.efs_csi_role.arn
+  #   }
   }
 }
 resource "aws_iam_policy" "efs_csi_policy" {
