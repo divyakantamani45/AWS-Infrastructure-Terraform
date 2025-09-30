@@ -46,6 +46,9 @@ module "eks_cluster" {
   subnet_ids      = var.private_subnets
   vpc_id          = var.vpc_id
 
+  # 👇 Enable both private + public access
+  cluster_endpoint_private_access = true
+  cluster_endpoint_public_access  = true
   eks_managed_node_groups = {
     default = {
       desired_capacity = 1

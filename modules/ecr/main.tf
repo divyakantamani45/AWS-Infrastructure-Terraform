@@ -37,7 +37,6 @@ data "aws_iam_policy_document" "repo_policy" {
             "ecr:DescribeRepositories",
             "ecr:BatchCheckLayerAvailability"
         ]
-        resources = [aws_ecr_repository.this.arn]
     }
 }
 
