@@ -30,6 +30,7 @@ module "iam" {
   source = "./modules/iam"
   eks_cluster_name = module.eks.cluster_name
   oidc_provider = module.eks.oidc_provider_url
+  oidc_provider_arn = module.eks.oidc_provider_arn
 }
 
  #Ecr creation

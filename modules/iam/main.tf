@@ -9,7 +9,7 @@ data "aws_iam_policy_document" "irsa_assume_role" {
     effect  = "Allow"
     principals {
       type = "Federated"
-      identifiers = [var.oidc_provider]
+      identifiers = [var.oidc_provider_arn]
     }
     condition {
       test = "StringEquals"
@@ -27,7 +27,7 @@ resource "aws_iam_role_policy" "irsa_policy" {
     Statement = [
       {
         Effect = "Allow"
-        Action = ["secretsmanager:GetSecretValue"]
+        Action = ["secretsmanager:GetSecretValue","secretsmanager:DescribeSecret"]
         Resource = "*"
       },
       {

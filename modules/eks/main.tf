@@ -61,5 +61,48 @@ module "eks_cluster" {
       iam_role_arn = aws_iam_role.eks_node_role.arn
     }
   }
+   # 👇 Addons (EFS CSI + optional others)
+  cluster_addons = {
+    aws-efs-csi-driver = {
+      most_recent              = true
+      service_account_role_arn = aws_iam_role.efs_csi_role.arn
+    }
+  }
 }
+resource "aws_iam_policy" "efs_csi_policy" {
+  name        = "${var.cluster_name}-AmazonEKS_EFS_CSI_Driver_Policy"
+  description = "EFS CSI driver policy"
+  policy      = file("efs-csi-policy.json")
+}
+
+resource "aws_iam_role" "efs_csi_role" {
+  name = "${var.cluster_name}-efs-csi-role"
+
+  assume_role_policy = data.aws_iam_policy_document.efs_assume_role.json
+}
+
+data "aws_iam_policy_document" "efs_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Federated"
+      identifiers = [module.eks_cluster.oidc_provider_arn]
+    }
+
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "${module.eks_cluster.oidc_provider}:sub"
+      values   = ["system:serviceaccount:kube-system:efs-csi-controller-sa"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "efs_csi_attach" {
+  role       = aws_iam_role.efs_csi_role.name
+  policy_arn = aws_iam_policy.efs_csi_policy.arn
+}
+
 
