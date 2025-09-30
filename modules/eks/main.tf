@@ -54,7 +54,7 @@ module "eks_cluster" {
       desired_capacity = 1
       max_capacity     = 1
       min_capacity     = 1
-      instance_types   = ["t3.small", "t3.micro", "t4g.small"]
+      instance_types   = ["t3.small", "t3.micro", "t3a.small"]
       capacity_type    = "SPOT"
 
       # Use the manually created IAM role
