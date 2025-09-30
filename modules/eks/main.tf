@@ -53,7 +53,7 @@ module "eks_cluster" {
     default = {
       desired_capacity = 1
       max_capacity     = 1
-      min_capacity     = 1
+      min_capacity     = 3
       instance_types   = ["t3.small"]
       capacity_type    = "SPOT"
 

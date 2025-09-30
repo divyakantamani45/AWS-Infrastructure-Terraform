@@ -46,7 +46,7 @@ jobs:
         
       - name: Terraform Plan
         id: plan
-        run: terraform plan -out plan.tfplan -var-file=envs/prod/terraform.tfvars -target=module.eks
+        run: terraform plan -out plan.tfplan -var-file=envs/prod/terraform.tfvars
         continue-on-error: true
 
       # - name: Upload Plan Artifact
@@ -93,7 +93,7 @@ jobs:
         run: terraform init -reconfigure -upgrade -input=false
       - name: Terraform Plan
         id: plan
-        run: terraform plan -out plan.tfplan -var-file=envs/prod/terraform.tfvars -target=module.eks
+        run: terraform plan -out plan.tfplan -var-file=envs/prod/terraform.tfvars
         continue-on-error: true
       - name: Terraform Apply
         run: terraform apply "plan.tfplan"
