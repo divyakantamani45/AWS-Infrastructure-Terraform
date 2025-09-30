@@ -34,9 +34,9 @@ jobs:
 
       # Step 4. Init with backend (example: prod backend)
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -reconfigure -upgrade -input=false
       
-      - name: Terraform Init
+      - name: Terraform plan
         run: terraform plan -destroy -out=destroy.tfplan -var-file=envs/prod/terraform.tfvars
 
       # Step 5. Terraform Destroy (with auto-approve)

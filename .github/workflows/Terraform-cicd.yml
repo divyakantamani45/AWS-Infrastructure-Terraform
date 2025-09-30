@@ -39,7 +39,7 @@ jobs:
           terraform fmt -check
 
       - name: Terraform Init
-        run: terraform init -upgrade -input=false
+        run: terraform init -reconfigure -upgrade -input=false
 
       - name: Terraform Validate
         run: terraform validate
@@ -47,7 +47,6 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: terraform plan -out plan.tfplan -var-file=envs/prod/terraform.tfvars
-        continue-on-error: true
 
       # - name: Upload Plan Artifact
       #   uses: actions/upload-artifact@v4
@@ -90,7 +89,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -reconfigure -upgrade -input=false
       - name: Terraform Plan
         id: plan
         run: terraform plan -out plan.tfplan -var-file=envs/prod/terraform.tfvars
