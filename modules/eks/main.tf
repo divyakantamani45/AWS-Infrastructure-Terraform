@@ -54,8 +54,8 @@ module "eks_cluster" {
       desired_capacity = 1
       max_capacity     = 1
       min_capacity     = 1
-      instance_types   = ["t3.small", "t3.micro", "t3a.small"]
-      capacity_type    = "SPOT"
+      instance_types   = "t3.small"
+      capacity_type    = "ON_DEMAND"
 
       # Use the manually created IAM role
       iam_role_arn = aws_iam_role.eks_node_role.arn
