@@ -37,7 +37,7 @@ jobs:
         run: terraform init -reconfigure -upgrade -input=false
       
       - name: Terraform plan
-        run: terraform plan -destroy -out=destroy.tfplan -var-file=envs/prod/terraform.tfvars
+        run: terraform plan -destroy -out=destroy.tfplan -var-file=envs/prod/terraform.tfvars -target=module.vpc -target=module.rds -target=module.iam -target=module.eks -target=module.efs -target=module.ecr
 
       # Step 5. Terraform Destroy (with auto-approve)
       - name: Terraform Destroy
