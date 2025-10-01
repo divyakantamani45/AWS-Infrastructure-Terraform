@@ -47,7 +47,12 @@ jobs:
         run: |
           tfsec --format junit --out tfsec-result.xml || true
           tflint || true  
-
+      - name: upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfsec-report
+          path: tfsec-result.xml
+          
       - name: Terraform Validate
         run: terraform validate
         
