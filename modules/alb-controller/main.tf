@@ -10,11 +10,11 @@ data "aws_iam_policy_document" "alb_assume_role" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {
       type = "Federated"
-      identifiers = [var.oidc_provider]
+      identifiers = [var.oidc_provider_arn]
     }
     condition {
       test = "StringEquals"
-      variable = "${replace(var.oidc_provider, "https://", "")}:sub"
+      variable = "${replace(var.oidc_issuer, "https://", "")}:sub"
       values = ["system:serviceaccount:kube-system:aws-load-balancer-controller"]
     }
   }
@@ -23,7 +23,17 @@ data "aws_iam_policy_document" "alb_assume_role" {
 # attach managed policy (or create inline with required permissions)
 resource "aws_iam_role_policy_attachment" "attach" {
   role       = aws_iam_role.alb_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSLoadBalancerControllerIAMPolicy"
+  policy_arn = "arn:aws:iam::904331955008:policy/AWSLoadBalancerControllerIAMPolicy"
+}
+#create Service account
+resource "kubernetes_service_account" "alb_sa" {
+  metadata {
+    name      = "aws-load-balancer-controller"
+    namespace = "kube-system"
+    annotations = {
+      "eks.amazonaws.com/role-arn" = aws_iam_role.alb_role.arn
+    }
+  }
 }
 
 # Install Helm chart

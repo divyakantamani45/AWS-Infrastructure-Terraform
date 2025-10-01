@@ -7,7 +7,9 @@ jobs:
   terraform-destroy:
     name: Destroy Infrastructure
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: production   # requires approval in GitHub settings
       url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -32,10 +34,10 @@ jobs:
 
       # Step 4. Init with backend (example: prod backend)
       - name: Terraform Init
-        working-directory: infra
-        run: terraform init
-
+        run: terraform init -reconfigure -upgrade -input=false
+      
+      - name: Terraform plan
+        run: terraform plan -destroy -out=destroy.tfplan -var-file=envs/prod/terraform.tfvars
       # Step 5. Terraform Destroy (with auto-approve)
       - name: Terraform Destroy
-        working-directory: infra
-        run: terraform destroy -auto-approve -var-file=envs/prod/terraform.tfvars
+        run: terraform apply destroy.tfplan

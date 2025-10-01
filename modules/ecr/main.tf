@@ -5,7 +5,7 @@ resource "aws_ecr_repository" "this" {
     # }
 
 
-    image_tag_mutability = "IMMUTABLE"
+    #image_tag_mutability = "IMMUTABLE"
 
 
     #tags = var.tags
@@ -37,7 +37,6 @@ data "aws_iam_policy_document" "repo_policy" {
             "ecr:DescribeRepositories",
             "ecr:BatchCheckLayerAvailability"
         ]
-        resources = [aws_ecr_repository.this.arn]
     }
 }
 

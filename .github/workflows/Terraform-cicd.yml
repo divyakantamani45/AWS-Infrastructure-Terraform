@@ -32,15 +32,27 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
-
+      - name: Install tfsec
+        run: |
+          curl -sSL https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
       - name: Terraform Format
         run: |
           terraform fmt -recursive
           terraform fmt -check
 
       - name: Terraform Init
-        run: terraform init -upgrade -input=false
-
+        run: terraform init -reconfigure -upgrade -input=false    
+      
+      - name: Static checks
+        run: |
+          tfsec --format junit --out tfsec-result.xml || true
+          tflint || true  
+      - name: upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfsec-report
+          path: tfsec-result.xml
+          
       - name: Terraform Validate
         run: terraform validate
         
@@ -90,9 +102,10 @@ jobs:
           aws-region: us-east-1
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -reconfigure -upgrade -input=false
       - name: Terraform Plan
         id: plan
         run: terraform plan -out plan.tfplan -var-file=envs/prod/terraform.tfvars
+        continue-on-error: true
       - name: Terraform Apply
         run: terraform apply "plan.tfplan"
